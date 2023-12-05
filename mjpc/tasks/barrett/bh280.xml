@@ -1,5 +1,5 @@
 <mujoco model="bhand">
-  <option timestep="0.001">
+  <option timestep="0.002" iterations="1" ls_iterations="4">
     <flag contact="disable"/>
   </option>
 
