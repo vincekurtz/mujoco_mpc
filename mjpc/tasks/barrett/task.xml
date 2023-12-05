@@ -1,12 +1,12 @@
 <mujoco model="Barrett Hand Demo">
   <include file="../common.xml"/>
-  <include file="barrett.xml" />
+  <include file="bh280.xml" />
 
-  <size memory="4K"/>
+  <size memory="1M"/>
 
   <custom>
     <!-- agent -->
-    <numeric name="agent_planner" data="1" />
+    <numeric name="agent_planner" data="0" />  <!-- 0: sampling, 1: gradient, 2: iLQG -->
     <numeric name="agent_horizon" data="1.0" />
     <numeric name="agent_timestep" data="0.01" />
     <numeric name="sampling_sample_width" data="0.01" />
@@ -33,8 +33,9 @@
     <user name="Control" dim="1" user="0 0.1 0.0 1.0"/>
 
     <!-- estimator -->
+    <!--
     <jointpos name="slider_pos" joint="slider"/>
-    <jointpos name="hinge_pos" joint="hinge_1"/>
+    <jointpos name="hinge_pos" joint="hinge_1"/>-->
 
     <!-- trace -->
     <framepos name="trace0" objtype="site" objname="tip"/>
