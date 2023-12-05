@@ -1,4 +1,8 @@
 <mujoco model="bhand">
+  <option timestep="0.001">
+    <flag contact="disable"/>
+  </option>
+
   <compiler angle="radian" meshdir="meshes/"/>
   <statistic meansize="0.0596351" extent="0.356088" center="6.79486e-05 -1.7895e-08 0.0381812"/>
   <asset>
