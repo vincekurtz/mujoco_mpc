@@ -38,6 +38,8 @@ add_library(
   tasks/tasks.h
   tasks/acrobot/acrobot.cc
   tasks/acrobot/acrobot.h
+  tasks/barrett/barrett.cc
+  tasks/barrett/barrett.h
   tasks/cartpole/cartpole.cc
   tasks/cartpole/cartpole.h
   tasks/fingers/fingers.cc
