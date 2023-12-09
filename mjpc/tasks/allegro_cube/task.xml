@@ -6,10 +6,10 @@
   <custom>
     <!-- agent -->
     <numeric name="agent_planner" data="0" />
-    <numeric name="agent_horizon" data="0.25" />
-    <numeric name="agent_timestep" data="0.01" />
+    <numeric name="agent_horizon" data="0.30" />
+    <numeric name="agent_timestep" data="0.03" />
     <numeric name="agent_policy_width" data="0.0035" />
-    <numeric name="sampling_spline_points" data="6" />
+    <numeric name="sampling_spline_points" data="10" />
     <numeric name="sampling_exploration" data="0.1" />
     <numeric name="robust_xfrc" data="0.004" />
     <numeric name="gradient_spline_points" data="6" />
@@ -51,9 +51,9 @@
       weight upper bound: Upper bound on this weight for the GUI.
       norm parameters: parameters (e.g., p, q) for norms
     -->
-    <user name="Position" dim="16" user="0 0.1 0.0 1.0" />
-    <user name="Velocity" dim="16" user="0 0.01 0.0 0.1" />
-    <user name="Actuation" dim="16" user="0 0.01 0.0 0.1" />
+    <user name="Position" dim="16" user="0 1.0 0.0 10.0" />
+    <user name="Velocity" dim="16" user="0 0.1 0.0 1.0" />
+    <user name="Actuation" dim="16" user="0 0.1 0.0 1.0" />
   </sensor>
  
   <!--<include file="cube.xml"/>-->
