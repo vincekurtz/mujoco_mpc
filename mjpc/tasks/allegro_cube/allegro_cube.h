@@ -20,9 +20,6 @@ class AllegroCube : public Task {
   };
   AllegroCube() : residual_(this) {}
 
-  // Reset the cube into the hand if it's on the floor
-  void TransitionLocked(mjModel* model, mjData* data) override;
-
  protected:
   std::unique_ptr<mjpc::ResidualFn> ResidualLocked() const override {
     return std::make_unique<ResidualFn>(this);
