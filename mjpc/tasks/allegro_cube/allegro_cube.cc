@@ -48,6 +48,15 @@ void AllegroCube::ResidualFn::Residual(const mjModel* model, const mjData* data,
   //mju_copy(residual + counter, cube_linear_velocity, 3);
   //counter += 3;
 
+  // ---------- Position ----------
+  std::vector<double> q_nom = {0.0, 0.5, 0.5, 0.5, 0.0, 0.5, 0.5, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0, 0.8, 0.5, 0.5};
+  mju_sub(residual + counter, data->qpos, q_nom.data(), model->nq);
+  counter += model->nq;
+
+  // ---------- Velocity ----------
+  mju_copy(residual + counter, data->qvel, model->nv);
+  counter += model->nv;
+
   // ---------- Control ----------
   mju_copy(residual + counter, data->actuator_force, model->nu);
   counter += model->nu;

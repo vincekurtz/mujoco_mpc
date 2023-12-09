@@ -51,7 +51,9 @@
       weight upper bound: Upper bound on this weight for the GUI.
       norm parameters: parameters (e.g., p, q) for norms
     -->
-    <user name="Actuation" dim="16" user="0 0.1 0.0 1.0" />
+    <user name="Position" dim="16" user="0 0.1 0.0 1.0" />
+    <user name="Velocity" dim="16" user="0 0.01 0.0 0.1" />
+    <user name="Actuation" dim="16" user="0 0.01 0.0 0.1" />
   </sensor>
  
   <!--<include file="cube.xml"/>-->
