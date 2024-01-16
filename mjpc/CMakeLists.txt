@@ -38,6 +38,8 @@ add_library(
   tasks/tasks.h
   tasks/acrobot/acrobot.cc
   tasks/acrobot/acrobot.h
+  tasks/allegro/allegro.cc
+  tasks/allegro/allegro.h
   tasks/cartpole/cartpole.cc
   tasks/cartpole/cartpole.h
   tasks/fingers/fingers.cc
@@ -75,6 +77,8 @@ add_library(
   planners/cost_derivatives.h
   planners/model_derivatives.cc
   planners/model_derivatives.h
+  planners/cross_entropy/planner.cc
+  planners/cross_entropy/planner.h
   planners/robust/robust_planner.cc
   planners/robust/robust_planner.h
   planners/sampling/planner.cc
