@@ -28,6 +28,10 @@
 
 namespace mjpc {
 
+// Number of models for domain randomization.  
+const int kMaxRandomizedModels = 10;
+const int kMaxRollouts = 128;
+
 /**
  * Predictive sampling planner with domain randomization.
  */
@@ -70,7 +74,7 @@ class DRSamplingPlanner : public RankedPlanner {
   void AddNoiseToPolicy(int i);
 
   // compute candidate trajectories
-  void Rollouts(int num_trajectory, int horizon, ThreadPool& pool);
+  void Rollouts(int num_rollouts, int num_randomized_models, int horizon, ThreadPool& pool);
 
   // return trajectory with best total return
   const Trajectory* BestTrajectory() override;
@@ -103,6 +107,9 @@ class DRSamplingPlanner : public RankedPlanner {
   mjModel* model;
   const Task* task;
 
+  // copies of model with randomized parameters
+  std::vector<mjModel*> randomized_models;
+
   // state
   std::vector<double> state;
   double time;
@@ -111,7 +118,7 @@ class DRSamplingPlanner : public RankedPlanner {
 
   // policy
   SamplingPolicy policy;  // (Guarded by mtx_)
-  SamplingPolicy candidate_policy[kMaxTrajectory];
+  SamplingPolicy candidate_policy[kMaxRollouts*kMaxRandomizedModels];
   SamplingPolicy previous_policy;
 
   // scratch
@@ -119,7 +126,7 @@ class DRSamplingPlanner : public RankedPlanner {
   std::vector<double> times_scratch;
 
   // trajectories
-  Trajectory trajectory[kMaxTrajectory];
+  Trajectory trajectory[kMaxRollouts*kMaxRandomizedModels];
 
   // order of indices of rolled out trajectories, ordered by total return
   std::vector<int> trajectory_order;
@@ -146,7 +153,8 @@ class DRSamplingPlanner : public RankedPlanner {
   double rollouts_compute_time;
   double policy_update_compute_time;
 
-  int num_trajectory_;
+  int num_rollouts_;
+  int num_randomized_models_;
   mutable std::shared_mutex mtx_;
 };
 
