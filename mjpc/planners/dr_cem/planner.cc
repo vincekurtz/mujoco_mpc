@@ -470,7 +470,7 @@ void DRCEMPlanner::Rollouts(int num_rollouts, int num_randomized_models, int hor
   count_before = pool.GetCount();
   for (int i=0; i < num_rollouts; i++) {
     for (int j=0; j < num_randomized_models; j++) {
-      pool.Schedule([&s = *this, &model = this->model, &task = this->task,
+      pool.Schedule([&s = *this, &model = this->randomized_models[j], &task = this->task,
                     &state = this->state, &time = this->time,
                     &mocap = this->mocap, &userdata = this->userdata, horizon,
                     i, j, num_rollouts]()
@@ -499,8 +499,10 @@ void DRCEMPlanner::Rollouts(int num_rollouts, int num_randomized_models, int hor
   // average performance across the randomized models.
   for (int i=0; i<num_rollouts; ++i) {
     for (int j=1; j<num_randomized_models; ++j) {
+      std::cout << trajectory[i + j*num_rollouts].total_return << " ";
       trajectory[i].total_return += trajectory[i + j*num_rollouts].total_return;
     }
+    std::cout << std::endl;
     trajectory[i].total_return /= num_randomized_models;
   }
 }
