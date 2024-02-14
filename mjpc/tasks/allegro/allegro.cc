@@ -364,13 +364,14 @@ void Allegro::StateRandomize(std::vector<double>* state, const int model_number)
     return;
   }
 
-  // Read standard deviation from slider parameters
-  double cube_pos_std_dev = parameters[12];
+  // Read noise scale from slider parameters
+  double cube_pos_range = parameters[12];
 
   // N.B. measured cube position for this example starts at position 4: see
   // ModifyState above
   for (int i = 4; i < 7; i++) {
-    const double change = absl::Gaussian<double>(gen_, 0.0, cube_pos_std_dev);
+    const double change =
+        absl::Uniform<double>(gen_, -cube_pos_range, cube_pos_range);
     (*state)[i] += change;
   }
 }
