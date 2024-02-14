@@ -571,7 +571,7 @@ void DRCEMPlanner::GUI(mjUI& ui) {
        "Zero\nLinear\nCubic"},
       {mjITEM_SLIDERINT, "Spline Pts", 2, &policy.num_spline_points, "0 1"},
       {mjITEM_SLIDERNUM, "Init. Std", 2, &std_initial_, "0 1"},
-      {mjITEM_SLIDERNUM, "Min. Std", 2, &std_min_, "0.01 0.5"},
+      {mjITEM_SLIDERNUM, "Min. Std", 2, &std_min_, "0.01 1.0"},
       {mjITEM_SLIDERINT, "Elite", 2, &n_elite_, "2 128"},
       {mjITEM_END}};
 
