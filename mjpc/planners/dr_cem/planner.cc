@@ -484,6 +484,9 @@ void DRCEMPlanner::Rollouts(int num_rollouts, int num_randomized_models,
               candidate_policy[k].Action(action, state, time);
             };
 
+            // Modify the initial cube state for domain randomization
+            s.task->StateRandomize(&state, j);
+
             // policy rollout
             s.trajectory[k].Rollout(sample_policy, task, model,
                                     s.data_[ThreadPool::WorkerId()].get(),
@@ -501,6 +504,7 @@ void DRCEMPlanner::Rollouts(int num_rollouts, int num_randomized_models,
   // by average performance across the randomized models.
   for (int i = 0; i < num_rollouts; ++i) {
     for (int j = 1; j < num_randomized_models; ++j) {
+      // DEBUG: print out the total return for each rollout
       std::cout << trajectory[i + j * num_rollouts].total_return << " ";
       trajectory[i].total_return +=
           trajectory[i + j * num_rollouts].total_return;

@@ -15,12 +15,13 @@
 #ifndef MJPC_TASK_H_
 #define MJPC_TASK_H_
 
+#include <mujoco/mujoco.h>
+
 #include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
 
-#include <mujoco/mujoco.h>
 #include "mjpc/norm.h"
 #include "mjpc/states/state.h"
 
@@ -126,7 +127,12 @@ class Task {
                            mjvScene* scene) const {}
 
   // Set different model parameters for domain randomization.
-  virtual void DomainRandomize(std::vector<mjModel*>& randomized_models) const {}
+  virtual void DomainRandomize(std::vector<mjModel*>& randomized_models) const {
+  }
+
+  // Set a different initial state for domain randomization.
+  virtual void StateRandomize(std::vector<double>* state,
+                              const int model_number) const {}
 
   virtual std::string Name() const = 0;
   virtual std::string XmlPath() const = 0;

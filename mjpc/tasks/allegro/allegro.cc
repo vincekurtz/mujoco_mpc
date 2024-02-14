@@ -354,4 +354,25 @@ void Allegro::DomainRandomize(std::vector<mjModel *> &randomized_models) const {
   }
 }
 
+// Change the initial state of the cube for domain randomization
+void Allegro::StateRandomize(std::vector<double>* state, const int model_number) const {
+  absl::BitGen gen_;
+
+  if (model_number == 0) {
+    // The first model for domain randomization is the original model, so we
+    // leave the state unchanged.
+    return;
+  }
+
+  // Read standard deviation from slider parameters
+  double cube_pos_std_dev = parameters[12];
+
+  // N.B. measured cube position for this example starts at position 4: see
+  // ModifyState above
+  for (int i = 4; i < 7; i++) {
+    const double change = absl::Gaussian<double>(gen_, 0.0, cube_pos_std_dev);
+    (*state)[i] += change;
+  }
+}
+
 }  // namespace mjpc
