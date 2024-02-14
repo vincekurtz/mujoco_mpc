@@ -14,13 +14,14 @@
 
 #include "mjpc/planners/dr_cem/planner.h"
 
+#include <absl/random/random.h>
+#include <mujoco/mujoco.h>
+
 #include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <shared_mutex>
 
-#include <absl/random/random.h>
-#include <mujoco/mujoco.h>
 #include "mjpc/array_safety.h"
 #include "mjpc/planners/planner.h"
 #include "mjpc/planners/sampling/planner.h"
@@ -56,14 +57,14 @@ void DRCEMPlanner::Initialize(mjModel* model, const Task& task) {
 
   // set number of trajectories to rollout
   num_rollouts_ = GetNumberOrDefault(10, model, "sampling_trajectories");
-  
+
   if (num_rollouts_ > kMaxRollouts) {
-    mju_error_i("Too many rollouts, %d is the maximum allowed.",
-                kMaxRollouts);
+    mju_error_i("Too many rollouts, %d is the maximum allowed.", kMaxRollouts);
   }
 
   // set number of randomized models
-  num_randomized_models_ = GetNumberOrDefault(4, model, "num_randomized_models");
+  num_randomized_models_ =
+      GetNumberOrDefault(4, model, "num_randomized_models");
 
   if (num_randomized_models_ > kMaxRandomizedModels) {
     mju_error_i("Too many randomized models, %d is the maximum allowed.",
@@ -83,7 +84,6 @@ void DRCEMPlanner::Initialize(mjModel* model, const Task& task) {
     randomized_models[i] = mj_copyModel(nullptr, model);
   }
   task.DomainRandomize(randomized_models);
-
 }
 
 // allocate memory
@@ -133,8 +133,7 @@ void DRCEMPlanner::Allocate() {
 }
 
 // reset memory to zeros
-void DRCEMPlanner::Reset(int horizon,
-                                const double* initial_repeated_action) {
+void DRCEMPlanner::Reset(int horizon, const double* initial_repeated_action) {
   // state
   std::fill(state.begin(), state.end(), 0.0);
   std::fill(mocap.begin(), mocap.end(), 0.0);
@@ -207,7 +206,7 @@ void DRCEMPlanner::OptimizePolicy(int horizon, ThreadPool& pool) {
   // resample nominal policy to current time
   this->ResamplePolicy(horizon);
 
-  // Get new domain randomization parameters 
+  // Get new domain randomization parameters
   task->DomainRandomize(randomized_models);
 
   // ----- rollout noisy policies ----- //
@@ -225,7 +224,8 @@ void DRCEMPlanner::OptimizePolicy(int horizon, ThreadPool& pool) {
   // sort so that the first ncandidates elements are the best candidates, and
   // the rest are in an unspecified order
   std::partial_sort(
-      trajectory_order.begin(), trajectory_order.begin() + num_rollouts,  // TODO: should be n_elite??
+      trajectory_order.begin(),
+      trajectory_order.begin() + num_rollouts,  // TODO: should be n_elite??
       trajectory_order.begin() + num_rollouts,
       [&trajectory = trajectory](int a, int b) {
         return trajectory[a].total_return < trajectory[b].total_return;
@@ -349,7 +349,7 @@ void DRCEMPlanner::NominalTrajectory(int horizon, ThreadPool& pool) {
 
 // set action from policy
 void DRCEMPlanner::ActionFromPolicy(double* action, const double* state,
-                                           double time, bool use_previous) {
+                                    double time, bool use_previous) {
   const std::shared_lock<std::shared_mutex> lock(mtx_);
   if (use_previous) {
     previous_policy.Action(action, state, time);
@@ -426,8 +426,8 @@ void DRCEMPlanner::AddNoiseToPolicy(int i, double std_min) {
 }
 
 // compute candidate trajectories
-void DRCEMPlanner::Rollouts(int num_rollouts, int num_randomized_models, int horizon,
-                                   ThreadPool& pool) {
+void DRCEMPlanner::Rollouts(int num_rollouts, int num_randomized_models,
+                            int horizon, ThreadPool& pool) {
   // reset noise compute time
   noise_compute_time = 0.0;
 
@@ -438,10 +438,12 @@ void DRCEMPlanner::Rollouts(int num_rollouts, int num_randomized_models, int hor
 
   // compute num_rollouts random control tapes, storing each one in
   // this->candidate_policy[i]. Additional copies of each tape are stored in
-  // this->candidate_policy[i + j*num_rollouts] for j=1,...,num_randomized_models
+  // this->candidate_policy[i + j*num_rollouts] for
+  // j=1,...,num_randomized_models
   int count_before = pool.GetCount();
   for (int i = 0; i < num_rollouts; i++) {
-    pool.Schedule([&s = *this, i, num_rollouts, num_randomized_models, std_min]() {
+    pool.Schedule([&s = *this, i, num_rollouts, num_randomized_models,
+                   std_min]() {
       // copy nominal policy
       {
         const std::shared_lock<std::shared_mutex> lock(s.mtx_);
@@ -455,8 +457,8 @@ void DRCEMPlanner::Rollouts(int num_rollouts, int num_randomized_models, int hor
       // make copies of the candidate policy for each randomized model
       for (int j = 1; j < num_randomized_models; j++) {
         int k = i + j * num_rollouts;
-        s.candidate_policy[k].CopyFrom(
-            s.candidate_policy[i], s.candidate_policy[i].num_spline_points);
+        s.candidate_policy[k].CopyFrom(s.candidate_policy[i],
+                                       s.candidate_policy[i].num_spline_points);
         s.candidate_policy[k].representation =
             s.candidate_policy[i].representation;
       }
@@ -464,43 +466,44 @@ void DRCEMPlanner::Rollouts(int num_rollouts, int num_randomized_models, int hor
   }
   pool.WaitCount(count_before + num_rollouts);
   pool.ResetCount();
-  
-  // Roll out the control tapes across the randomized models. Tape i for model j
-  // is stored in this->trajectory[i + j*num_rollouts]. 
-  count_before = pool.GetCount();
-  for (int i=0; i < num_rollouts; i++) {
-    for (int j=0; j < num_randomized_models; j++) {
-      pool.Schedule([&s = *this, &model = this->randomized_models[j], &task = this->task,
-                    &state = this->state, &time = this->time,
-                    &mocap = this->mocap, &userdata = this->userdata, horizon,
-                    i, j, num_rollouts]()
-                    {
-        // policy helper function
-        int k = i + j * num_rollouts;
-        auto sample_policy = [&candidate_policy = s.candidate_policy, &k](
-                                  double* action, const double* state,
-                                  double time) {
-          candidate_policy[k].Action(action, state, time);
-        };
 
-        // policy rollout
-        s.trajectory[k].Rollout(
-            sample_policy, task, model, s.data_[ThreadPool::WorkerId()].get(),
-            state.data(), time, mocap.data(), userdata.data(), horizon); 
-      });
+  // Roll out the control tapes across the randomized models. Tape i for model j
+  // is stored in this->trajectory[i + j*num_rollouts].
+  count_before = pool.GetCount();
+  for (int i = 0; i < num_rollouts; i++) {
+    for (int j = 0; j < num_randomized_models; j++) {
+      pool.Schedule(
+          [&s = *this, &model = this->randomized_models[j], &task = this->task,
+           &state = this->state, &time = this->time, &mocap = this->mocap,
+           &userdata = this->userdata, horizon, i, j, num_rollouts]() {
+            // policy helper function
+            int k = i + j * num_rollouts;
+            auto sample_policy = [&candidate_policy = s.candidate_policy, &k](
+                                     double* action, const double* state,
+                                     double time) {
+              candidate_policy[k].Action(action, state, time);
+            };
+
+            // policy rollout
+            s.trajectory[k].Rollout(sample_policy, task, model,
+                                    s.data_[ThreadPool::WorkerId()].get(),
+                                    state.data(), time, mocap.data(),
+                                    userdata.data(), horizon);
+          });
     }
   }
-  pool.WaitCount(count_before + num_rollouts*num_randomized_models);
+  pool.WaitCount(count_before + num_rollouts * num_randomized_models);
   pool.ResetCount();
 
   // compute average trajectory costs across the randomized models, storing
-  // them in this->trajectory[i].total_return (the first time rollout i is used).
-  // Thus the first num_rollouts elements of this->trajectory are scored by
-  // average performance across the randomized models.
-  for (int i=0; i<num_rollouts; ++i) {
-    for (int j=1; j<num_randomized_models; ++j) {
-      std::cout << trajectory[i + j*num_rollouts].total_return << " ";
-      trajectory[i].total_return += trajectory[i + j*num_rollouts].total_return;
+  // them in this->trajectory[i].total_return (the first time rollout i is
+  // used). Thus the first num_rollouts elements of this->trajectory are scored
+  // by average performance across the randomized models.
+  for (int i = 0; i < num_rollouts; ++i) {
+    for (int j = 1; j < num_randomized_models; ++j) {
+      std::cout << trajectory[i + j * num_rollouts].total_return << " ";
+      trajectory[i].total_return +=
+          trajectory[i + j * num_rollouts].total_return;
     }
     std::cout << std::endl;
     trajectory[i].total_return /= num_randomized_models;
@@ -592,8 +595,8 @@ void DRCEMPlanner::GUI(mjUI& ui) {
 
 // planner-specific plots
 void DRCEMPlanner::Plots(mjvFigure* fig_planner, mjvFigure* fig_timer,
-                                int planner_shift, int timer_shift,
-                                int planning, int* shift) {
+                         int planner_shift, int timer_shift, int planning,
+                         int* shift) {
   // ----- planner ----- //
   double planner_bounds[2] = {-6.0, 6.0};
 
