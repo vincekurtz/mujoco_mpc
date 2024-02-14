@@ -11,19 +11,18 @@
 
   <!-- changing contact model, default stiffness=-2500 damping=-100 -->
   <!-- pretty good, stiffness=-3000 damping=-200 -->
-  <!--
   <default>
     <geom solref="-5000 -500" solimp="0.999 0.999 0.01 0.5 1"/>
-  </default>-->
+  </default>
 
   <custom>
     <!-- agent 0 = Sampling, 5 = CEM, 7 = MPPI, 8 = DR Sampling, 9 = DR MPPI, 10 = DR CEM -->
     <numeric name="agent_planner" data="10" />
     <numeric name="agent_horizon" data="0.4" />
-    <numeric name="agent_timestep" data="0.005" />
+    <numeric name="agent_timestep" data="0.006" />
     <numeric name="agent_policy_width" data="0.0035" />
-    <numeric name="sampling_spline_points" data="2" />
-    <numeric name="sampling_exploration" data="0.1" />
+    <numeric name="sampling_spline_points" data="3" />
+    <numeric name="sampling_exploration" data="0.3" />
     <numeric name="sampling_trajectories" data="25" />
     <numeric name="sampling_representation" data="0" />
     <numeric name="robust_xfrc" data="0.004" />
@@ -35,21 +34,21 @@
 
     <!-- cem -->
     <numeric name="n_elite" data="3" />
-    <numeric name="std_min" data="0.4" />
+    <numeric name="std_min" data="0.2" />
 
     <!-- mppi -->
     <numeric name="langevin" data="0" />
     <numeric name="lambda" data="0.1" />
 
     <!-- domain randomization -->
-    <numeric name="num_randomized_models" data="5" />
+    <numeric name="num_randomized_models" data="1" />
 
     <!-- state noise -->
     <numeric name="residual_Cube Rot Noise" data="0.00 0.0 0.4"/>
-    <numeric name="residual_Cube Pos Noise" data="0.000 0.0 0.01"/>
-    <numeric name="residual_Cube Pos X Bias" data="0.005 -0.02 0.02"/>
-    <numeric name="residual_Cube Pos Y Bias" data="0.005 -0.02 0.02"/>
-    <numeric name="residual_Cube Pos Z Bias" data="0.005 -0.02 0.02"/>
+    <numeric name="residual_Cube Pos Noise" data="0.004 0.0 0.01"/>
+    <numeric name="residual_Cube Pos X Bias" data="0.002 -0.02 0.02"/>
+    <numeric name="residual_Cube Pos Y Bias" data="0.002 -0.02 0.02"/>
+    <numeric name="residual_Cube Pos Z Bias" data="0.002 -0.02 0.02"/>
 
     <!-- [dirty] counters -->
     <numeric name="residual_Curr # Rots" data="0 0 1000000"/>
@@ -61,7 +60,7 @@
     <!-- [dirty] domain randomization noise -->
     <numeric name="residual_DR friction std" data="0.0 0.0 0.2"/>
     <numeric name="residual_DR geom scale std" data="0.0 0.0 0.1"/>
-    <numeric name="residual_DR cube pos range" data="0.005 0.0 0.01"/>
+    <numeric name="residual_DR cube pos range" data="0.006 0.0 0.01"/>
   </custom>
 
   <!-- Set the camera viewpoint -->
@@ -93,7 +92,7 @@
 
   <sensor>
     <!-- Residuals -->
-    <user name="Cube Position" dim="3" user="1 30 0 300 0.02 50"/>
+    <user name="Cube Position" dim="3" user="1 100 0 300 0.02 50"/>
     <user name="Cube Orientation" dim="3" user="0 1 0 100" />
     <user name="Cube Velocity" dim="3" user="0 0 0 20" />
     <user name="Actuation" dim="12" user="0 0 0 10" />
