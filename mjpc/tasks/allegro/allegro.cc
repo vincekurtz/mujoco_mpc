@@ -322,6 +322,7 @@ void Allegro::DomainRandomize(std::vector<mjModel *> &randomized_models) const {
 
   // Standard deviations are set by slider parameters
   double friction_std_dev = parameters[10];
+  double geom_scale_std_dev = parameters[11];
 
   // Each model has all friction coefficients boosted or shrunk, so some models
   // are more slippery and others are more grippy.
@@ -334,6 +335,21 @@ void Allegro::DomainRandomize(std::vector<mjModel *> &randomized_models) const {
       model->geom_friction[j] =
           original_model->geom_friction[j] + friction_change;
       model->geom_friction[j] = std::max(model->geom_friction[j], 0.0);
+    }
+  }
+
+  // Different models have all collision geometries scaled by a random factor
+  for (int i = 1; i < randomized_models.size(); i++) {
+    mjModel *model = randomized_models[i];
+
+    const double geom_scale =
+        absl::Gaussian<double>(gen_, 1.0, geom_scale_std_dev);
+    for (int j = 0; j < model->ngeom; j++) {
+      model->geom_size[3 * j] = original_model->geom_size[3 * j] * geom_scale;
+      model->geom_size[3 * j + 1] =
+          original_model->geom_size[3 * j + 1] * geom_scale;
+      model->geom_size[3 * j + 2] =
+          original_model->geom_size[3 * j + 2] * geom_scale;
     }
   }
 }

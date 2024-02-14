@@ -59,6 +59,7 @@
 
     <!-- [dirty] domain randomization noise -->
     <numeric name="residual_DR friction std" data="0.0 0.0 0.2"/>
+    <numeric name="residual_DR geom scale std" data="0.0 0.0 0.1"/>
   </custom>
 
   <!-- Set the camera viewpoint -->

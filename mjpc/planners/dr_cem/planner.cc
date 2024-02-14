@@ -533,8 +533,7 @@ void DRCEMPlanner::Traces(mjvScene* scn) {
   auto best = this->BestTrajectory();
 
   // sample traces
-  int n_elite = n_elite_;
-  for (int k = 0; k < n_elite; k++) {
+  for (int k = 0; k < num_rollouts_ * num_randomized_models_; k++) {
     // plot sample
     for (int i = 0; i < best->horizon - 1; i++) {
       if (scn->ngeom + task->num_trace > scn->maxgeom) break;
@@ -543,17 +542,15 @@ void DRCEMPlanner::Traces(mjvScene* scn) {
         mjv_initGeom(&scn->geoms[scn->ngeom], mjGEOM_LINE, zero3, zero3, zero9,
                      color);
 
-        // elite index
-        int idx = trajectory_order[k];
         // make geometry
         mjv_makeConnector(
             &scn->geoms[scn->ngeom], mjGEOM_LINE, width,
-            trajectory[idx].trace[3 * task->num_trace * i + 3 * j],
-            trajectory[idx].trace[3 * task->num_trace * i + 1 + 3 * j],
-            trajectory[idx].trace[3 * task->num_trace * i + 2 + 3 * j],
-            trajectory[idx].trace[3 * task->num_trace * (i + 1) + 3 * j],
-            trajectory[idx].trace[3 * task->num_trace * (i + 1) + 1 + 3 * j],
-            trajectory[idx].trace[3 * task->num_trace * (i + 1) + 2 + 3 * j]);
+            trajectory[k].trace[3 * task->num_trace * i + 3 * j],
+            trajectory[k].trace[3 * task->num_trace * i + 1 + 3 * j],
+            trajectory[k].trace[3 * task->num_trace * i + 2 + 3 * j],
+            trajectory[k].trace[3 * task->num_trace * (i + 1) + 3 * j],
+            trajectory[k].trace[3 * task->num_trace * (i + 1) + 1 + 3 * j],
+            trajectory[k].trace[3 * task->num_trace * (i + 1) + 2 + 3 * j]);
 
         // increment number of geometries
         scn->ngeom += 1;
