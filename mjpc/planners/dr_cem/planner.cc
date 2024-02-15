@@ -505,11 +505,11 @@ void DRCEMPlanner::Rollouts(int num_rollouts, int num_randomized_models,
   for (int i = 0; i < num_rollouts; ++i) {
     for (int j = 1; j < num_randomized_models; ++j) {
       // DEBUG: print out the total return for each rollout
-      std::cout << trajectory[i + j * num_rollouts].total_return << " ";
+      //std::cout << trajectory[i + j * num_rollouts].total_return << " ";
       trajectory[i].total_return +=
           trajectory[i + j * num_rollouts].total_return;
     }
-    std::cout << std::endl;
+    //std::cout << std::endl;
     trajectory[i].total_return /= num_randomized_models;
   }
 }
