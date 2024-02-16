@@ -358,8 +358,6 @@ void Allegro::DomainRandomize(std::vector<mjModel *> &randomized_models) const {
 void Allegro::StateRandomize(const std::vector<double> &original_state,
                              const int model_number,
                              std::vector<double> *new_state) const {
-  absl::BitGen gen_;
-
   // Most state entries are unchanged
   *new_state = original_state;
 
@@ -374,10 +372,26 @@ void Allegro::StateRandomize(const std::vector<double> &original_state,
 
   // N.B. measured cube position for this example starts at position 4: see
   // ModifyState above
-  for (int i = 4; i < 7; i++) {
-    const double change =
-        absl::Uniform<double>(gen_, -cube_pos_range, cube_pos_range);
-    (*new_state)[i] += change;
+  //absl::BitGen gen_;
+  //for (int i = 4; i < 7; i++) {
+  //  const double change =
+  //      absl::Uniform<double>(gen_, -cube_pos_range, cube_pos_range);
+  //  (*new_state)[i] += change;
+  //}
+
+  // Modify the measured cube position in a deterministic way
+  if (model_number == 0) {
+    (*new_state)[4] += cube_pos_range;
+  } else if (model_number == 1) {
+    (*new_state)[4] -= cube_pos_range;
+  } else if (model_number == 2) {
+    (*new_state)[5] += cube_pos_range;
+  } else if (model_number == 3) {
+    (*new_state)[5] -= cube_pos_range;
+  } else if (model_number == 4) {
+    (*new_state)[6] += cube_pos_range;
+  } else if (model_number == 5) {
+    (*new_state)[6] -= cube_pos_range;
   }
 }
 
