@@ -41,14 +41,14 @@
     <numeric name="lambda" data="0.1" />
 
     <!-- domain randomization -->
-    <numeric name="num_randomized_models" data="1" />
+    <numeric name="num_randomized_models" data="3" />
 
     <!-- state noise -->
     <numeric name="residual_Cube Rot Noise" data="0.00 0.0 0.4"/>
     <numeric name="residual_Cube Pos Noise" data="0.000 0.0 0.01"/>
-    <numeric name="residual_Cube Pos X Bias" data="0.000 -0.02 0.02"/>
-    <numeric name="residual_Cube Pos Y Bias" data="0.000 -0.02 0.02"/>
-    <numeric name="residual_Cube Pos Z Bias" data="0.000 -0.02 0.02"/>
+    <numeric name="residual_Cube Pos X Bias" data="0.015 -0.02 0.02"/>
+    <numeric name="residual_Cube Pos Y Bias" data="0.01 -0.02 0.02"/>
+    <numeric name="residual_Cube Pos Z Bias" data="0.01 -0.02 0.02"/>
 
     <!-- [dirty] counters -->
     <numeric name="residual_Curr # Rots" data="0 0 1000000"/>
@@ -58,9 +58,9 @@
     <numeric name="residual_Sec per Rot" data="0.0 0.0 60.0"/>
 
     <!-- [dirty] domain randomization noise -->
-    <numeric name="residual_DR friction std" data="0.02 0.0 0.2"/>
-    <numeric name="residual_DR geom scale std" data="0.01 0.0 0.1"/>
-    <numeric name="residual_DR cube pos range" data="0.001 0.0 0.01"/>
+    <numeric name="residual_DR friction std" data="0.00 0.0 0.2"/>
+    <numeric name="residual_DR geom scale std" data="0.00 0.0 0.1"/>
+    <numeric name="residual_DR cube pos range" data="0.00 0.0 0.01"/>
   </custom>
 
   <!-- Set the camera viewpoint -->
