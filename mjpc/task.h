@@ -131,8 +131,11 @@ class Task {
   }
 
   // Set a different initial state for domain randomization.
-  virtual void StateRandomize(std::vector<double>* state,
-                              const int model_number) const {}
+  virtual void StateRandomize(const std::vector<double>& original_state,
+                              const int model_number,
+                              std::vector<double>* new_state) const {
+    *new_state = original_state;
+  }
 
   virtual std::string Name() const = 0;
   virtual std::string XmlPath() const = 0;

@@ -355,25 +355,31 @@ void Allegro::DomainRandomize(std::vector<mjModel *> &randomized_models) const {
 }
 
 // Change the initial state of the cube for domain randomization
-void Allegro::StateRandomize(std::vector<double>* state, const int model_number) const {
+void Allegro::StateRandomize(const std::vector<double> &original_state,
+                             const int model_number,
+                             std::vector<double> *new_state) const {
+  *new_state = original_state;
   absl::BitGen gen_;
 
-  if (model_number == 0) {
-    // The first model for domain randomization is the original model, so we
-    // leave the state unchanged.
-    return;
-  }
+  //if (model_number == 0) {
+  //  // The first model for domain randomization is the original model, so we
+  //  // leave the state unchanged.
+  //  return;
+  //}
 
   // Read noise scale from slider parameters
   double cube_pos_range = parameters[12];
 
   // N.B. measured cube position for this example starts at position 4: see
   // ModifyState above
-  for (int i = 4; i < 7; i++) {
-    const double change =
-        absl::Uniform<double>(gen_, -cube_pos_range, cube_pos_range);
-    (*state)[i] += change;
-  }
+  //for (int i = 4; i < 7; i++) {
+  //  const double change =
+  //      absl::Uniform<double>(gen_, -cube_pos_range, cube_pos_range);
+  //  (*state)[i] += change;
+  //}
+  (*new_state)[4] -= 1.5 * cube_pos_range;
+  (*new_state)[5] -= 1.0 * cube_pos_range;
+  (*new_state)[6] -= 1.0 * cube_pos_range;
 }
 
 }  // namespace mjpc

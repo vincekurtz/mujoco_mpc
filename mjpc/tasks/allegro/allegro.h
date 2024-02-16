@@ -44,8 +44,9 @@ class Allegro : public Task {
   // Do domain randomization
   void DomainRandomize(
       std::vector<mjModel *> &randomized_models) const override;
-  void StateRandomize(std::vector<double> *state,
-                      const int model_num) const override;
+  void StateRandomize(const std::vector<double>& original_state,
+                      const int model_num,
+                      std::vector<double> *new_state) const override;
 
  protected:
   std::unique_ptr<mjpc::ResidualFn> ResidualLocked() const override {

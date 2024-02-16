@@ -96,6 +96,9 @@ class DRCEMPlanner : public Planner {
   // copies of models with randomized parameters
   std::vector<mjModel*> randomized_models;
 
+  // copies of the state for randomization over the state estimate
+  std::vector<std::vector<double>> randomized_states;
+
   // state
   std::vector<double> state;
   double time;

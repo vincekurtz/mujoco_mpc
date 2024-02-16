@@ -96,6 +96,13 @@ void DRCEMPlanner::Allocate() {
   mocap.resize(7 * model->nmocap);
   userdata.resize(model->nuserdata);
 
+  // randomized states are a vector of vectors, each of which is a the same size
+  // as the state vector
+  randomized_states.resize(kMaxRandomizedModels);
+  for (int i = 0; i < kMaxRandomizedModels; i++) {
+    randomized_states[i].resize(num_state);
+  }
+
   // policy
   int num_max_parameter = model->nu * kMaxTrajectoryHorizon;
   policy.Allocate(model, *task, kMaxTrajectoryHorizon);
@@ -474,8 +481,9 @@ void DRCEMPlanner::Rollouts(int num_rollouts, int num_randomized_models,
     for (int j = 0; j < num_randomized_models; j++) {
       pool.Schedule(
           [&s = *this, &model = this->randomized_models[j], &task = this->task,
-           &state = this->state, &time = this->time, &mocap = this->mocap,
-           &userdata = this->userdata, horizon, i, j, num_rollouts]() {
+           &original_state = this->state, &state = this->randomized_states[j],
+           &time = this->time, &mocap = this->mocap, &userdata = this->userdata,
+           horizon, i, j, num_rollouts]() {
             // policy helper function
             int k = i + j * num_rollouts;
             auto sample_policy = [&candidate_policy = s.candidate_policy, &k](
@@ -485,7 +493,7 @@ void DRCEMPlanner::Rollouts(int num_rollouts, int num_randomized_models,
             };
 
             // Modify the initial cube state for domain randomization
-            s.task->StateRandomize(&state, j);
+            s.task->StateRandomize(original_state, j, &state);
 
             // policy rollout
             s.trajectory[k].Rollout(sample_policy, task, model,
