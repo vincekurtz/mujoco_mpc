@@ -358,8 +358,10 @@ void Allegro::DomainRandomize(std::vector<mjModel *> &randomized_models) const {
 void Allegro::StateRandomize(const std::vector<double> &original_state,
                              const int model_number,
                              std::vector<double> *new_state) const {
-  *new_state = original_state;
   absl::BitGen gen_;
+
+  // Most state entries are unchanged
+  *new_state = original_state;
 
   //if (model_number == 0) {
   //  // The first model for domain randomization is the original model, so we
@@ -372,14 +374,11 @@ void Allegro::StateRandomize(const std::vector<double> &original_state,
 
   // N.B. measured cube position for this example starts at position 4: see
   // ModifyState above
-  //for (int i = 4; i < 7; i++) {
-  //  const double change =
-  //      absl::Uniform<double>(gen_, -cube_pos_range, cube_pos_range);
-  //  (*state)[i] += change;
-  //}
-  (*new_state)[4] -= 1.5 * cube_pos_range;
-  (*new_state)[5] -= 1.0 * cube_pos_range;
-  (*new_state)[6] -= 1.0 * cube_pos_range;
+  for (int i = 4; i < 7; i++) {
+    const double change =
+        absl::Uniform<double>(gen_, -cube_pos_range, cube_pos_range);
+    (*new_state)[i] += change;
+  }
 }
 
 }  // namespace mjpc
