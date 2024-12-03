@@ -11,6 +11,7 @@ from pydrake.common import RandomDistribution
 
 import numpy as np
 
+# Set up the model
 builder = DiagramBuilder()
 plant, scene_graph = AddMultibodyPlantSceneGraph(
     builder, time_step=0.05)
@@ -21,7 +22,7 @@ plant.Finalize()
 
 ctrl = builder.AddSystem(
     RandomSource(num_outputs=2, 
-                 sampling_interval_sec=0.05,
+                 sampling_interval_sec=plant.time_step(),
                  distribution=RandomDistribution.kGaussian)
 )
 
@@ -29,10 +30,9 @@ builder.Connect(
     ctrl.get_output_port(0),
     plant.get_actuation_input_port()
 )
-    
-# Add visualization to see the geometries.
 diagram = builder.Build()
 
+# Run the simulation
 num_trials = 10000
 times = []
 for i in range(num_trials):

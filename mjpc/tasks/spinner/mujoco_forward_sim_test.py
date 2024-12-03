@@ -12,9 +12,8 @@ data.qpos = model.key("home").qpos
 
 def simulate():
     """Simulate a random action sequence."""
-    U = np.random.normal(0, 1, (40, 2))
-    for u in U:
-        data.ctrl = u
+    for t in range(int(2.0 / model.opt.timestep)):
+        data.ctrl = np.random.normal(0, 1, model.nu)
         mujoco.mj_step(model, data)
     return data
 
