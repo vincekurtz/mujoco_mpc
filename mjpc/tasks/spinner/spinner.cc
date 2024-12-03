@@ -22,7 +22,7 @@ void Spinner::ResidualFn::Residual(const mjModel* model, const mjData* data,
                                     double* residual) const {
   // ---------- Finger joint positions ----------
   residual[0] = data->qpos[0] - 0.3;
-  residual[1] = data->qpos[1] - 1.5;
+  residual[1] = data->qpos[1] - 1.3;
 
   // ---------- Spinner angle ----------
   residual[2] = data->qpos[2] - 2.0;
