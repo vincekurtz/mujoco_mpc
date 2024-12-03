@@ -22,7 +22,7 @@
         </body>
       </body>
     </body>
-    <body name="spinner" pos="1.5 1 0">
+    <body name="spinner" pos="1.0 -1.5 0">
       <inertial pos="0 0 0" quat="0.7 0 0.7 0" mass="1" diaginertia="0.074 0.054 0.022"/>
       <joint name="theta_three" pos="0 0 0" axis="0 0 1" damping="0.1"/>
       <geom size="0.25" rgba="0.1 0.3 0.5 1"/>
