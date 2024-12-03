@@ -31,8 +31,8 @@
   </worldbody>
 
   <actuator>
-    <motor joint="theta_one"/>
-    <motor joint="theta_two"/>
+    <motor joint="theta_one" ctrlrange="-1 1" ctrllimited="true"/>
+    <motor joint="theta_two" ctrlrange="-1 1" ctrllimited="true"/>
   </actuator>
 
   <!-- Scene and lighting -->

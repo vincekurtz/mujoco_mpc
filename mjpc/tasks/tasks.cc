@@ -38,6 +38,7 @@
 #include "mjpc/tasks/quadruped/quadruped.h"
 #include "mjpc/tasks/rubik/solve.h"
 #include "mjpc/tasks/shadow_reorient/hand.h"
+#include "mjpc/tasks/spinner/spinner.h"
 #include "mjpc/tasks/swimmer/swimmer.h"
 #include "mjpc/tasks/walker/walker.h"
 
@@ -67,6 +68,7 @@ std::vector<std::shared_ptr<Task>> GetTasks() {
       std::make_shared<Quadrotor>(),
       std::make_shared<QuadrupedFlat>(),
       std::make_shared<QuadrupedHill>(),
+      std::make_shared<Spinner>(),
       std::make_shared<Swimmer>(),
       std::make_shared<Walker>(),
   };
