@@ -150,6 +150,8 @@ class iLQGPlanner : public Planner {
   double rollouts_compute_time;
   double backward_pass_compute_time;
   double policy_update_compute_time;
+  double total_time;
+  int logged_iters = 0;
 
   // mutex
   mutable std::shared_mutex mtx_;

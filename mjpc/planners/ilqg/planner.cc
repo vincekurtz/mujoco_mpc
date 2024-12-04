@@ -572,31 +572,38 @@ void iLQGPlanner::Iteration(int horizon, ThreadPool& pool) {
                                      action_step);
 
   if (settings.verbose) {
-    std::cout << "iLQG Information\n" << '\n';
-    std::cout << "  best return: " << trajectory[winner].total_return << '\n';
-    std::cout << "  previous return: " << previous_return << '\n';
-    std::cout << "  nominal return: " << policy.trajectory.total_return << '\n';
-    std::cout << "  linesearch step size: " << action_step << '\n';
-    std::cout << "  improvement: " << improvement << '\n';
-    std::cout << "  regularization: " << backward_pass.regularization << '\n';
-    std::cout << "  regularization factor: "
-              << backward_pass.regularization_factor << '\n';
-    std::cout << "  dV: " << expected << '\n';
-    std::cout << "  dV[0]: " << backward_pass.dV[0] << '\n';
-    std::cout << "  dV[1]: " << backward_pass.dV[1] << '\n';
+    // std::cout << "iLQG Information\n" << '\n';
+    // std::cout << "  best return: " << trajectory[winner].total_return << '\n';
+    // std::cout << "  previous return: " << previous_return << '\n';
+    // std::cout << "  nominal return: " << policy.trajectory.total_return << '\n';
+    // std::cout << "  linesearch step size: " << action_step << '\n';
+    // std::cout << "  improvement: " << improvement << '\n';
+    // std::cout << "  regularization: " << backward_pass.regularization << '\n';
+    // std::cout << "  regularization factor: "
+              // << backward_pass.regularization_factor << '\n';
+    // std::cout << "  dV: " << expected << '\n';
+    // std::cout << "  dV[0]: " << backward_pass.dV[0] << '\n';
+    // std::cout << "  dV[1]: " << backward_pass.dV[1] << '\n';
+// 
+    // std::cout << "\niLQG Timing (ms)\n" << '\n';
+    // std::cout << "  nominal: " << nominal_compute_time * 1.0e-3 << '\n';
+    // std::cout << "  model derivative: "
+              // << model_derivative_compute_time * 1.0e-3 << '\n';
+    // std::cout << "  cost derivative: " << cost_derivative_compute_time * 1.0e-3
+              // << '\n';
+    // std::cout << "  backward pass: " << backward_pass_compute_time * 1.0e-3
+              // << '\n';
+    // std::cout << "  rollouts: " << rollouts_compute_time * 1.0e-3 << '\n';
+    // std::cout << "  policy update: " << policy_update_compute_time * 1.0e-3
+              // << '\n';
+    // std::cout << "\n\n";
 
-    std::cout << "\niLQG Timing (ms)\n" << '\n';
-    std::cout << "  nominal: " << nominal_compute_time * 1.0e-3 << '\n';
-    std::cout << "  model derivative: "
-              << model_derivative_compute_time * 1.0e-3 << '\n';
-    std::cout << "  cost derivative: " << cost_derivative_compute_time * 1.0e-3
-              << '\n';
-    std::cout << "  backward pass: " << backward_pass_compute_time * 1.0e-3
-              << '\n';
-    std::cout << "  rollouts: " << rollouts_compute_time * 1.0e-3 << '\n';
-    std::cout << "  policy update: " << policy_update_compute_time * 1.0e-3
-              << '\n';
-    std::cout << "\n\n";
+    total_time = nominal_compute_time + model_derivative_compute_time +
+                 cost_derivative_compute_time + backward_pass_compute_time +
+                 rollouts_compute_time + policy_update_compute_time;
+    logged_iters += 1;
+
+    std::cout << logged_iters << ", " << total_time * 1.0e-3 << std::endl;
   }
 
   // stop timer

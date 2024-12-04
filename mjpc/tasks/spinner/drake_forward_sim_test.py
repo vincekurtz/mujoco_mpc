@@ -45,5 +45,9 @@ for i in range(num_trials):
 
 avg_time_ms = np.mean(times) * 1000
 std_time_ms = np.std(times) * 1000
+max_time_ms = np.max(times) * 1000
+min_time_ms = np.min(times) * 1000
 
 print(f"Average time: {avg_time_ms:.4f} +/- {std_time_ms:.4f} ms")
+print(f"Max time: {max_time_ms:.4f} ms")
+print(f"Min time: {min_time_ms:.4f} ms")
